@@ -14,14 +14,12 @@ int main(int argc,char **argv)
     float fin_x,fin_y,fin_z;
 while(1)
 {
+    
     if(testclient_location.call(srv))
         { 
              ROS_INFO("arm_on: %d",srv.response.arm_on);
             if(srv.response.arm_on == 1 )
            {
-#if armLogicDebug
-               
-#endif 
                 fin_x = srv.response.x;
                 fin_y = srv.response.y;
                 fin_z = srv.response.z;
