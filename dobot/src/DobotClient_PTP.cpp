@@ -20,7 +20,6 @@
 
 
 
-
 int main(int argc, char **argv)
 {
     //初始化客户端节点
@@ -121,120 +120,118 @@ int main(int argc, char **argv)
 
 
     float fin_x,fin_y,fin_z;
-    while (ros::ok()) {
-        
-        
-        
+    while (ros::ok()) 
+    {
         client = n.serviceClient<location_srv::Location>("location_srv");
         location_srv::Location srv6;
  
         
         if(client.call(srv6))
         {
-            fin_x = srv6.response.x;
-            fin_y = srv6.response.y;
-            fin_z = srv6.response.z;
-            ROS_INFO("fin_x,fin_y,fin_z: %f, %f,%f",fin_x,fin_y,fin_z);
+            if(srv6.response.arm_on == 1)
+            {
+                fin_x = srv6.response.x;
+                fin_y = srv6.response.y;
+                fin_z = srv6.response.z;
+                ROS_INFO("fin_x,fin_y,fin_z: %f, %f,%f",fin_x,fin_y,fin_z);
+                do {
+                //前往目标位置
+                client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
+                dobot::SetPTPCmd srv;
+                srv.request.ptpMode = 1;
+                srv.request.x = fin_x;
+                srv.request.y = fin_y;
+                srv.request.z = fin_z;
+                srv.request.r = 0;
+                client.call(srv);
+                if (srv.response.result == 0) {
+                    break;
+                }     
+                ros::spinOnce();
+                if (ros::ok() == false) {
+                    break;
+                }
+                } while (1);
 
+                do {
+                //开启吸盘
+                client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
+                dobot::SetEndEffectorSuctionCup srv;
+                    srv.request.enableCtrl = 1;
+                    srv.request.suck = 1;
+
+                    client.call(srv);
+                    if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+
+                do {
+                //把东西放到一边
+                client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
+                dobot::SetPTPCmd srv;
+                    srv.request.ptpMode = 1;
+                    srv.request.x = 200;
+                    srv.request.y = 200;
+                    srv.request.z = 0;
+                    srv.request.r = 0;
+                    client.call(srv);
+                    if (srv.response.result == 0) {
+                        break;
+                    }
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+
+                
+                do {
+                //关闭吸盘       
+                client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
+                dobot::SetEndEffectorSuctionCup srv;
+                    srv.request.suck = 0;
+                    srv.request.enableCtrl = 0;
+
+                    client.call(srv);
+                    if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+                //回到起始位置
+
+                do {
+                client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
+                dobot::SetPTPCmd srv;
+                    srv.request.ptpMode = 1;
+                    srv.request.x = 200;
+                    srv.request.y = 0;
+                    srv.request.z = 0;
+                    srv.request.r = 0;
+                    client.call(srv);
+                    if (srv.response.result == 0) {
+                        break;
+                    }
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+            
+           }
+           else
+           {
+               ROS_INFO("No target");
+           }
         }
-        else
-        {
-            ROS_INFO("Failed to call service location_srv");
-            return 1;
-        }
-
-        do {
-           //前往目标位置
-           client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
-           dobot::SetPTPCmd srv;
-            srv.request.ptpMode = 1;
-            srv.request.x = fin_x;
-            srv.request.y = fin_y;
-            srv.request.z = fin_z;
-            srv.request.r = 0;
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }     
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-
-        do {
-           //开启吸盘
-           client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
-           dobot::SetEndEffectorSuctionCup srv;
-            srv.request.enableCtrl = 1;
-            srv.request.suck = 1;
-
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }     
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-
-        do {
-           //把东西放到一边
-           client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
-           dobot::SetPTPCmd srv;
-            srv.request.ptpMode = 1;
-            srv.request.x = 200;
-            srv.request.y = 200;
-            srv.request.z = 0;
-            srv.request.r = 0;
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-
-        
-        do {
-          //关闭吸盘       
-           client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
-           dobot::SetEndEffectorSuctionCup srv;
-            srv.request.suck = 0;
-            srv.request.enableCtrl = 0;
-
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }     
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-        //回到起始位置
-
-        do {
-           client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
-           dobot::SetPTPCmd srv;
-            srv.request.ptpMode = 1;
-            srv.request.x = 200;
-            srv.request.y = 0;
-            srv.request.z = 0;
-            srv.request.r = 0;
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-  
         ros::spinOnce();
     }
 
