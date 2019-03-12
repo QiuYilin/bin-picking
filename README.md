@@ -28,11 +28,25 @@ sudo usermod -a -G dialout username //其中,username为普通用户名,请根�
 
 将这四种功能包一同放到workspace编译,执行
 
+
+启动方法
 ```
-roslaunch realsense2_camera rs_camera.launch filters:=pointcloud
+roslaunch realsense2_camera rs_rgbd.launch
 roslaunch darknet_ros darknet_ros.launch
 rosrun coo_tran coo_tran
+rosrun dobot DobotServer
+rosrun dobot DobotClient_PTP
 ```
+
+目前的问题
+1.通过rgbd得到的点云测距不准确
+2.手眼标定
+
+接下来的工作：
+1.解决点云测距问题
+2.询问手眼标定方法
+3.将dobot两个节点写成一个launch
+
 
 
 
