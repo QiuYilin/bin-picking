@@ -13,7 +13,7 @@
 #include <message_filters/time_synchronizer.h>
 
 #define pointCouldDebug 0
-#define coordinateDebug 1
+#define coordinateDebug 0
 
 int u, v;
 float camera_x, camera_y, camera_z;
@@ -33,7 +33,7 @@ void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
   std::cout << "v0 " << v << std::endl;
   #endif
   // boundingBoxesResults_.bounding_boxes.clear();
-  // cout << "\033[2J\033[1;1H";     // clear terminal
+  // std::cout << "\033[2J\033[1;1H";     // clear terminal
 }
 
 
@@ -49,16 +49,21 @@ void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_m
 #endif
   pcl::PointCloud<pcl::PointXYZ> point_pcl;
   pcl::fromROSMsg(*point_cloud_msg, point_pcl);
-#if pointCloudDebug
+#if pointCouldDebug
   std::cout << "cloud: width = " << point_pcl.width
             << " height = " << point_pcl.height << std::endl;
 #endif
   auto pt = point_pcl.at(u,v);
-  
+  std::cout << "center_x  = " << point_pcl.at(320,240).x << std::endl;
+  std::cout << "center_y  = " << point_pcl.at(320,240).y << std::endl;
+  std::cout << "center_z  = " << point_pcl.at(320,240).z << std::endl;
   camera_x = pt.x;
   camera_y = pt.y;
   camera_z = 0.1 * pt.z;
-  
+      // std::cout << "x  = " << camera_x << " y = " << camera_y
+      //         << " z = " << camera_z << std::endl;
+  std::cout << "\033[2J\033[1;1H";     // clear terminal
+
   obj_class = "none";
 }
 
@@ -141,7 +146,7 @@ int main(int argc, char **argv) {
       nh.subscribe("/darknet_ros/bounding_boxes", 1, darknetCallback);
   /*/camera/depth_registered/points color_optical*/
   ros::Subscriber point_cloud_sub =
-      nh.subscribe("/camera/depth_registered/points", 1, pointCouldCallback);
+      nh.subscribe("camera/depth_registered/points", 1, pointCouldCallback);///camera/depth_registered/points
 
 
   ros::ServiceServer location_server =

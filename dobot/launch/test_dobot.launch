@@ -1,0 +1,3 @@
+<launch>
+    <node pkg="dobot" type="testclient_location" name="testclient_location"/>
+</launch>

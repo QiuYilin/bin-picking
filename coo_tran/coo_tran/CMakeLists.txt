@@ -3,7 +3,7 @@ project(cood_tran)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
-find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs image_transport std_msgs pcl_ros location_srv)
+find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs image_transport std_msgs pcl_ros location_srv cv_bridge)
 
 find_package(OpenCV REQUIRED)
 
@@ -32,6 +32,13 @@ add_dependencies(cood_tran ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED
 target_link_libraries(cood_tran
   ${catkin_LIBRARIES}
 )
+
+add_executable(cood_tran_depth src/cood_tran_depth.cpp)
+ target_link_libraries(cood_tran_depth
+   ${catkin_LIBRARIES}
+   ${OpenCV_LIBRARIES}
+ )
+
 
 
 SET(CMAKE_BUILD_TYPE "Debug")  
