@@ -1,4 +1,4 @@
 <launch>
-    <node pkg="dobot" type="DobotServer" name="DobotServer"/>
-    <node pkg="dobot" type="DobotClient_PTP" name="DobotClient_PTP"/>
+    <node pkg="dobot" type="DobotServer" name="DobotServer" output="screen"/>
+    <node pkg="dobot" type="DobotClient_PTP" name="DobotClient_PTP" output="screen"/>
 </launch>  

@@ -1,0 +1,7 @@
+<launch>
+   <arg name="target" default="napkin1"/>
+   <param name="target" type="str"  value="$(arg target)"/>
+   <node pkg="cood_tran" type="cood_tran" name="cood_tran" output="screen">
+   
+   </node>
+</launch>

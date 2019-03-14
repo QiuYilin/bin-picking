@@ -18,12 +18,13 @@
 int u, v;
 float camera_x, camera_y, camera_z;
 std::string obj_class;
+std::string target_obj; 
 
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 
 {
   
-  ROS_INFO("darknetCallback");
+  //ROS_INFO("darknetCallback");
   obj_class = msg->bounding_boxes[0].Class;
   
   u = (msg->bounding_boxes[0].xmin + msg->bounding_boxes[0].xmax) / 2;
@@ -54,16 +55,17 @@ void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_m
             << " height = " << point_pcl.height << std::endl;
 #endif
   auto pt = point_pcl.at(u,v);
-  std::cout << "center_x  = " << point_pcl.at(320,240).x << std::endl;
-  std::cout << "center_y  = " << point_pcl.at(320,240).y << std::endl;
-  std::cout << "center_z  = " << point_pcl.at(320,240).z << std::endl;
-  camera_x = pt.x;
-  camera_y = pt.y;
-  camera_z = 0.1 * pt.z;
-      // std::cout << "x  = " << camera_x << " y = " << camera_y
-      //         << " z = " << camera_z << std::endl;
-  std::cout << "\033[2J\033[1;1H";     // clear terminal
-
+  camera_x = 0.124987*pt.x;
+  camera_y = 0.124987*pt.y;
+  camera_z = 0.124987*pt.z;
+    // std::cout << "c_x  = " << 0.124987*point_pcl.at(0,240).x << " c_y = " << 0.124987*point_pcl.at(0,240).y
+    //         << " c_z = " << 0.124987*point_pcl.at(0,240).z << std::endl;
+   if (obj_class == target_obj &&(camera_x >= -1.5 ||camera_x<=1.5))
+  {
+  std::cout << "x  = " << camera_x << " y = " << camera_y
+            << " z = " << camera_z << std::endl;
+  //std::cout << "\033[2J\033[1;1H";     // clear terminal
+  }
   obj_class = "none";
 }
 
@@ -105,30 +107,30 @@ void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_m
 
 
 bool location(location_srv::Location::Request &req,
-              location_srv::Location::Response &res) {
-
-
-  
-
+              location_srv::Location::Response &res) 
+{
   std::cout << "obj_class " << obj_class <<std::endl;
-  if (obj_class != "napkin1")
-    res.arm_on = 0;
-  else {
-    std::cout << "Target get."<< std::endl;
-    res.arm_on = 1;
-    //乘以转换矩阵得到final_x final_y final_z
-    float final_x, final_y, final_z;
-    final_x = camera_x;
-    final_y = camera_y;
-    final_z = camera_z;
-    res.x = final_x;
-    res.y = final_y;
-    res.z = final_z;
-    std::cout << "x  = " << camera_x << " y = " << camera_y
-              << " z = " << camera_z << std::endl;
-    std::cout << "service answer" << std::endl;
-
-  }
+  if (obj_class != target_obj)     
+       res.arm_on = 0;    
+    else
+    if(camera_x >= -1.5 && camera_x <= 1.5)
+    {
+      std::cout << "Target get."<< std::endl;
+      res.arm_on = 1;
+      //乘以转换矩阵得到final_x final_y final_z
+      float final_x, final_y, final_z;
+      final_x = camera_x;
+      final_y = camera_y;
+      final_z = camera_z;
+      res.x = final_x;
+      res.y = final_y;
+      res.z = final_z;
+      std::cout << "x  = " << camera_x << " y = " << camera_y
+                << " z = " << camera_z << std::endl;
+      std::cout << "service answer" << std::endl;
+    }
+   
+  
   
   return true;
 }
@@ -138,9 +140,9 @@ int main(int argc, char **argv) {
   //初始化ROS
   ros::init(argc, argv, "cood_tran");
   ros::NodeHandle nh;
-
-
-
+  target_obj = "None";
+  ros::param::get("target", target_obj);
+  std::cout << "param  = " << target_obj << std::endl;
   //创建接收darknet结果和点云信息的接受者
   ros::Subscriber ros_coord_pixel_sub =
       nh.subscribe("/darknet_ros/bounding_boxes", 1, darknetCallback);

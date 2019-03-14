@@ -38,7 +38,10 @@ add_executable(cood_tran_depth src/cood_tran_depth.cpp)
    ${catkin_LIBRARIES}
    ${OpenCV_LIBRARIES}
  )
-
+add_dependencies(cood_tran_depth ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cood_tran_depth
+  ${catkin_LIBRARIES}
+)
 
 
 SET(CMAKE_BUILD_TYPE "Debug")  
