@@ -12,11 +12,12 @@
 
                                           # 启动方法
 将这四种功能包一同放到workspace编译,执行
-
+...
 roslaunch realsense2_camera rs_rgbd.launch
 roslaunch darknet_ros darknet_ros.launch
 roslaunch cood_tran coo_tran.launch target:=red (red为可选目标)
 roslaunch dobot dobot.launch
+...
                                           # 更新
 2019.3.13 SR300应该避免在20cm以内的地方测距，其点云单位存在问题，暂且搁置，可能会查看一下重新标定的方法，但标定和深度信息应该没影响  眼在手上采用物理转换关系比较好，原点应该是光学主点，主点和焦距在内参里得到。
 
