@@ -25,23 +25,26 @@ include_directories(
 
 
 
-add_executable(cood_tran
-  src/cood_tran.cpp
+add_executable(cood_tran_node
+  src/cood_tran_node.cpp src/cood_tran.cpp
 )
-add_dependencies(cood_tran ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(cood_tran
+
+
+add_dependencies(cood_tran_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(cood_tran_node 
   ${catkin_LIBRARIES}
 )
 
-add_executable(cood_tran_depth src/cood_tran_depth.cpp)
- target_link_libraries(cood_tran_depth
-   ${catkin_LIBRARIES}
-   ${OpenCV_LIBRARIES}
- )
-add_dependencies(cood_tran_depth ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(cood_tran_depth
-  ${catkin_LIBRARIES}
-)
+# add_executable(cood_tran_depth src/cood_tran_depth.cpp)
+#  target_link_libraries(cood_tran_depth
+#    ${catkin_LIBRARIES}
+#    ${OpenCV_LIBRARIES}
+#  )
+# add_dependencies(cood_tran_depth ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(cood_tran_depth
+#   ${catkin_LIBRARIES}
+# )
+
 
 
 SET(CMAKE_BUILD_TYPE "Debug")  

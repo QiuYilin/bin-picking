@@ -1,3 +1,5 @@
+/* 
+# The coodinate can be caculated by depth extrinsic and intrinsic
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>//image_transport包用于发布订阅图片
 #include <cv_bridge/cv_bridge.h>
@@ -54,3 +56,4 @@ int main(int argc, char **argv) {
   ros::spin();
   return 0;
 }
+*/
