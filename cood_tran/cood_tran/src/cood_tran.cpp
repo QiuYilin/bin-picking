@@ -10,6 +10,34 @@ float camera_x, camera_y, camera_z;
 
 std::string obj_class,target_obj;
 
+
+void coodTran(ros::NodeHandle nh)
+{
+  target_obj = "None";
+  ros::param::get("target", target_obj);
+
+  ros::ServiceServer car_interact_server =
+  nh.advertiseService("car_interact_srv", carInteract);
+
+  ros::Subscriber ros_coord_pixel_sub =
+  nh.subscribe("/darknet_ros/bounding_boxes", 1, darknetCallback);
+
+  ros::Subscriber point_cloud_sub =
+  nh.subscribe("camera/depth_registered/points", 1, pointCouldCallback);///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
+  
+  ros::ServiceServer location_server =
+  nh.advertiseService("location_srv", location);
+  ROS_INFO("ready location server");
+}
+
+
+bool carInteract(cood_tran_msgs::car_interact::Request &req,
+              cood_tran_msgs::car_interact::Response &res) 
+{
+  
+  return true;
+}
+
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 {
   obj_class = msg->bounding_boxes[0].Class;
@@ -38,6 +66,7 @@ void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_m
             << " height = " << point_pcl.height << std::endl;
 #endif
   auto pt = point_pcl.at(u,v);
+  //旧版本的realsense包乘以0.124987系数
   camera_x = 0.124987*pt.x;
   camera_y = 0.124987*pt.y;
   camera_z = 0.124987*pt.z;
@@ -52,8 +81,8 @@ void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_m
   obj_class = "none";
 }
 
-bool location(location_srv::Location::Request &req,
-              location_srv::Location::Response &res) 
+bool location(cood_tran_msgs::location::Request &req,
+              cood_tran_msgs::location::Response &res) 
 {
   std::cout << "obj_class " << obj_class <<std::endl;
   if (obj_class != target_obj)     

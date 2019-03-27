@@ -14,7 +14,7 @@
 #include "dobot/SetPTPCmd.h"
 #include "dobot/SetEndEffectorSuctionCup.h"
 
-#include <location_srv/Location.h>
+#include <cood_tran_msgs/location.h>
 
 
 
@@ -36,8 +36,7 @@ int main(int argc, char **argv)
     dobot::SetCmdTimeout srv1;
     srv1.request.timeout = 3000;
     if (client.call(srv1) == false) {
-        ROS_ERROR("Failed to call SetCmdTimeout. Maybe DobotServer isn't started yet!");
-        return -1;
+        ROS_ERROR("Wait fot dobotserver to be on.");
     }
 
     // Clear the command queue
@@ -122,8 +121,8 @@ int main(int argc, char **argv)
     float fin_x,fin_y,fin_z;
     while (ros::ok()) 
     {
-        client = n.serviceClient<location_srv::Location>("location_srv");
-        location_srv::Location srv6;
+        client = n.serviceClient<cood_tran_msgs::location>("location_srv");
+        cood_tran_msgs::location srv6;
  
         
         if(client.call(srv6))
@@ -232,6 +231,8 @@ int main(int argc, char **argv)
                ROS_INFO("No target");
            }
         }
+        else
+        ROS_INFO("Wait for the camera to be on");
         ros::spinOnce();
     }
 

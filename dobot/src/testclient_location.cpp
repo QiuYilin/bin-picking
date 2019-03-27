@@ -1,5 +1,5 @@
 #include "ros/ros.h"
-#include <location_srv/Location.h>
+#include <cood_tran_msgs/location.h>
 #include <cstdlib>
 #define armLogicDebug 1
 int main(int argc,char **argv)
@@ -8,16 +8,16 @@ int main(int argc,char **argv)
 
     ros::NodeHandle nh;
 
-    ros::ServiceClient testclient_location = nh.serviceClient<location_srv::Location>("location_srv");
+    ros::ServiceClient testclient_location = nh.serviceClient<cood_tran_msgs::location>("location_srv");
 
-    location_srv::Location srv;
+    cood_tran_msgs::location srv;
     float fin_x,fin_y,fin_z;
 while(1)
 {
     
     if(testclient_location.call(srv))
         { 
-             ROS_INFO("arm_on: %d",srv.response.arm_on);
+            ROS_INFO("arm_on: %d",srv.response.arm_on);
             if(srv.response.arm_on == 1 )
            {
                 fin_x = srv.response.x;
@@ -32,8 +32,7 @@ while(1)
         }
     else
         {
-            ROS_INFO("Failed to call service location_srv");
-            return 1;
+            ROS_INFO("Wait for the camera to be on.");
         }    
 }
     return 0;

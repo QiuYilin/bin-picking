@@ -3,6 +3,8 @@
                             # 一、配置realsense2_camera功能包
 参见：https://github.com/QiuYilin/ros-realsense2-install
 
+sudo apt install ros-kinetic-rgbd-launch
+
                               # 二、配置darknet_ros功能包
 参见： https://github.com/leggedrobotics/darknet_ros
                                  # 三、配置dobot
@@ -25,7 +27,12 @@ roslaunch dobot dobot.launch
 
 2019.3.25 realsense包已经更新，所有坐标单位都是mm :https://github.com/intel-ros/realsense/pull/683,即需要更新到新的包且不要乘以0.124987的系数。需要把这个版本的包保存下来。
 
-接下来的工作：1.加上手眼标定矩阵
+
+2019.3.27 确立代码风格   位姿估计对四自由度机器人的意义不大 目前最需要的是增加实际场景交互逻辑
+http://community.bwbot.org/topic/468/ros-c-%E4%BB%A3%E7%A0%81%E9%A3%8E%E6%A0%BC%E8%AF%B4%E6%98%8E
+https://zh-google-styleguide.readthedocs.io/en/latest/google-cpp-styleguide/#id2
+
+接下来的工作：1.加上手眼标定矩阵 
 
 
 
