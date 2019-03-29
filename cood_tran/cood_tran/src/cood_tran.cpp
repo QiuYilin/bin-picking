@@ -1,7 +1,6 @@
 #include "ros/ros.h"
 #include "cood_tran.h"
 
-#define pointCouldDebug 0
 #define coordinateDebug 0
 
 int u,v;
@@ -61,15 +60,18 @@ void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_m
 #endif
   pcl::PointCloud<pcl::PointXYZ> point_pcl;
   pcl::fromROSMsg(*point_cloud_msg, point_pcl);
-#if pointCouldDebug
-  std::cout << "cloud: width = " << point_pcl.width
-            << " height = " << point_pcl.height << std::endl;
-#endif
-  auto pt = point_pcl.at(u,v);
-  //旧版本的realsense包乘以0.124987系数
-  camera_x = 0.124987*pt.x;
-  camera_y = 0.124987*pt.y;
-  camera_z = 0.124987*pt.z;
+  if (point_pcl.isOrganized ())
+  {
+    auto pt = point_pcl.at(u,v);
+    //旧版本的realsense包乘以0.124987系数
+    camera_x = 0.124987*pt.x;
+    camera_y = 0.124987*pt.y;
+    camera_z = 0.124987*pt.z;
+  }
+  else
+  std::cout << " the pointcloud is not organized " << std::endl;
+
+
   // std::cout << "c_x  = " << 0.124987*point_pcl.at(0,240).x << " c_y = " << 0.124987*point_pcl.at(0,240).y
   //         << " c_z = " << 0.124987*point_pcl.at(0,240).z << std::endl;
    if (obj_class == target_obj &&(camera_x >= -1.5 ||camera_x<=1.5))
@@ -87,22 +89,39 @@ bool location(cood_tran_msgs::location::Request &req,
   std::cout << "obj_class " << obj_class <<std::endl;
   if (obj_class != target_obj)     
        res.arm_on = 0;    
-    else
-    if(camera_x >= -1.5 && camera_x <= 1.5)
+  else
+  {
+    if(camera_z >= 0 && camera_z <= 1.5)
     {
       std::cout << "Target get."<< std::endl;
-      res.arm_on = 1;
       //乘以转换矩阵得到final_x final_y final_z
       float final_x, final_y, final_z;
       final_x = camera_x;
       final_y = camera_y;
       final_z = camera_z;
-      res.x = final_x;
-      res.y = final_y;
-      res.z = final_z;
-      std::cout << "x  = " << camera_x << " y = " << camera_y
-                << " z = " << camera_z << std::endl;
-      std::cout << "service answer" << std::endl;
+      float R2 = final_x*final_x + final_y*final_y;
+      //判断初步识别到的位置是否在机械臂工作空间
+      if (R2>= 0.2*0.2 && R2<=0.256*0.256)
+      {
+        res.arm_on = 1;
+        res.x = final_x;
+        res.y = final_y;
+        res.z = final_z;
+        std::cout << "x  = " << camera_x << " y = " << camera_y
+                  << " z = " << camera_z << std::endl;
+      }
+      else
+      {
+        res.arm_on = 0;
+        res.dx = -1*final_x;
+        res.dy = final_y - 0.256 + 0.01;
+      }
     }
+    else
+    {
+     res.arm_on = 0;
+     std::cout << "bad parameters " << obj_class <<std::endl;
+    }
+  }
   return true;
 }

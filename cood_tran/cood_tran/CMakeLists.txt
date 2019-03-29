@@ -10,11 +10,7 @@ find_package(OpenCV REQUIRED)
 # find_package( Eigen3 REQUIRED )
 
 catkin_package()
-include_directories(
-  ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
-  #${Super4PCS_INCLUDE_DIR}
-)
+
 
 
 include_directories(
@@ -23,6 +19,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_LIBRARIES}
   ${EIGEN3_INCLUDE_DIR}
+  #${Super4PCS_INCLUDE_DIR}
 )
 
 
@@ -31,6 +28,8 @@ include_directories(
 add_executable(cood_tran_node
   src/cood_tran_node.cpp src/cood_tran.cpp
 )
+
+
 # add_executable(opengr
 #   src/opengr.cpp
 # )

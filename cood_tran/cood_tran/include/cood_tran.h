@@ -1,5 +1,6 @@
 #ifndef COOD_TRAN_H
 #define COOD_TRAN_H
+
 #include <darknet_ros_msgs/BoundingBox.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <cood_tran_msgs/location.h>
@@ -10,6 +11,7 @@
 #include <sensor_msgs/PointCloud2.h>         //消息头文件
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
+#include<math.h>
 
 
 
