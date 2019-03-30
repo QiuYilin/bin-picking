@@ -2,6 +2,6 @@
     <arg name="grasp_on" default="0"/>
     <param name="grasp_on" type="bool"  value="$(arg grasp_on)"/>
     <node pkg="dobot" type="DobotServer" name="DobotServer" output="screen"/>
-    <node pkg="dobot" type="DobotTask" name="DobotTask" output="screen" launch-prefix=”xterm -e"/>
+    <node pkg="dobot" type="DobotTask" name="DobotTask" output="screen" launch-prefix="xterm -e"/>
 </launch>  
 
