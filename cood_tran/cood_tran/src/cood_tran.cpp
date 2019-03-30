@@ -11,14 +11,14 @@ std::string obj_class,target_obj;
 
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 {
+  std::cout << "Items refrash "  << std::endl;
   obj_class = "none";
-  std::cout << "Items get "  << std::endl;
+  
   obj_class = msg->bounding_boxes[0].Class;
+  
   u = (msg->bounding_boxes[0].xmin + msg->bounding_boxes[0].xmax) / 2;
   v = (msg->bounding_boxes[0].ymin + msg->bounding_boxes[0].ymax) / 2;
-  std::cout << "Items refrash "  << std::endl;
-
-  // std::cout << "\033[2J\033[1;1H";     // clear terminal
+ // std::cout << "\033[2J\033[1;1H";     // clear terminal
 }
 
 void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg) 
