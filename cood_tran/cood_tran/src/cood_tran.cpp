@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 #include "cood_tran.h"
 
-#define coordinateDebug 0
+#define coordinateDebug 1
 
 int u,v;
 
@@ -11,7 +11,6 @@ std::string obj_class,target_obj;
 
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 {
-  std::cout << "darknetCallback" << std::endl;
   obj_class = msg->bounding_boxes[0].Class;
   u = (msg->bounding_boxes[0].xmin + msg->bounding_boxes[0].xmax) / 2;
   v = (msg->bounding_boxes[0].ymin + msg->bounding_boxes[0].ymax) / 2;
@@ -24,7 +23,7 @@ void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 
 void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg) 
 {
-  std::cout << "pointCloudCallback" << std::endl;
+  //std::cout << "pointCloudCallback" << std::endl;
 #if pointCouldDebug
   std::cout << "pointCloud2 (header):" << point_cloud_msg->header << std::endl;
 #endif

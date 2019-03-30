@@ -4,9 +4,9 @@
 
 ros::ServiceClient client;
 float fin_x,fin_y,fin_z;
-bool grasp_on = 0,arm_on = 0,car_on = 0;
+bool grasp_on = 1,arm_on = 0,car_on = 0;
 
-void dobotInit(ros::NodeHandle n)
+void dobotInit(ros::NodeHandle &n)
 {
 
     // SetCmdTimeout
@@ -93,7 +93,7 @@ void dobotInit(ros::NodeHandle n)
     } while (0);
 }
 
-void dobotTask(ros::NodeHandle n)
+void dobotTask(ros::NodeHandle &n)
 {
 
                     do {
@@ -191,12 +191,13 @@ int main(int argc, char **argv)
     ros::NodeHandle n;
     dobotInit(n);
 
-    ros::param::get("grasp_on", grasp_on);
+    //ros::param::get("grasp_on", grasp_on);
 
     ros::ServiceServer arm_car_server = n.advertiseService("arm_car_srv",arm_car_interact);
     int count = 0;
     while (ros::ok()) 
     {
+        
         //读取目标是否识别到
         client = n.serviceClient<cood_tran_msgs::location>("location_srv");
         cood_tran_msgs::location srv6;
@@ -206,6 +207,8 @@ int main(int argc, char **argv)
         }
 
         //判断是否识别到目标且小车是否停止
+        std::cout<< "grasp_on:" << grasp_on << std::endl;
+        std::cout<< "arm_on:" << arm_on << std::endl;
         if (arm_on == 1 && grasp_on == 1 )
         {
                 if (count >=3)
