@@ -14,7 +14,6 @@
 #include<math.h>
 
 
-
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg);
 void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
 bool location(cood_tran_msgs::location::Request &req,cood_tran_msgs::location::Response &res);

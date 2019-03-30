@@ -222,6 +222,7 @@ int main(int argc, char **argv)
                 count++;
                 //抓取标志位置0
                 arm_on =0;
+                grasp_on = 0;
 
         }
         else
