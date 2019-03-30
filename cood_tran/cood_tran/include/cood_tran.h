@@ -18,8 +18,7 @@
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg);
 void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
 bool location(cood_tran_msgs::location::Request &req,cood_tran_msgs::location::Response &res);
-bool carInteract(cood_tran_msgs::car_interact::Request &req,cood_tran_msgs::car_interact::Response &res);
-void coodTran(ros::NodeHandle nh);
+void coodTran(ros::NodeHandle &nh);
 
 
 #endif

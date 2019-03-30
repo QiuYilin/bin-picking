@@ -9,36 +9,9 @@ float camera_x, camera_y, camera_z;
 
 std::string obj_class,target_obj;
 
-
-void coodTran(ros::NodeHandle nh)
-{
-  target_obj = "None";
-  ros::param::get("target", target_obj);
-
-  ros::ServiceServer car_interact_server =
-  nh.advertiseService("car_interact_srv", carInteract);
-
-  ros::Subscriber ros_coord_pixel_sub =
-  nh.subscribe("/darknet_ros/bounding_boxes", 1, darknetCallback);
-
-  ros::Subscriber point_cloud_sub =
-  nh.subscribe("camera/depth_registered/points", 1, pointCouldCallback);///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
-  
-  ros::ServiceServer location_server =
-  nh.advertiseService("location_srv", location);
-  ROS_INFO("ready location server");
-}
-
-
-bool carInteract(cood_tran_msgs::car_interact::Request &req,
-              cood_tran_msgs::car_interact::Response &res) 
-{
-  
-  return true;
-}
-
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 {
+  std::cout << "darknetCallback" << std::endl;
   obj_class = msg->bounding_boxes[0].Class;
   u = (msg->bounding_boxes[0].xmin + msg->bounding_boxes[0].xmax) / 2;
   v = (msg->bounding_boxes[0].ymin + msg->bounding_boxes[0].ymax) / 2;
@@ -51,6 +24,7 @@ void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 
 void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg) 
 {
+  std::cout << "pointCloudCallback" << std::endl;
 #if pointCouldDebug
   std::cout << "pointCloud2 (header):" << point_cloud_msg->header << std::endl;
 #endif
@@ -112,6 +86,7 @@ bool location(cood_tran_msgs::location::Request &req,
       }
       else
       {
+        std::cout << "Out of workspace"<< std::endl;
         res.arm_on = 0;
         res.dx = -1*final_x;
         res.dy = final_y - 0.256 + 0.01;
