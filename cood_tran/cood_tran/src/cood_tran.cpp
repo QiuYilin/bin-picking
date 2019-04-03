@@ -2,93 +2,99 @@
 #include "cood_tran.h"
 
 
-
+extern std::string target_obj;
 int u,v;
+float camera_x,camera_y,camera_z;
 
-float camera_x, camera_y, camera_z;
+int get_target =0;
 
-std::string obj_class,target_obj;
-
+//查找目标物体 得到像素坐标
 void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg)
 {
-  std::cout << "Items refrash "  << std::endl;
-  obj_class = "none";
+  std::cout << "Find something ! " ;
   
-  obj_class = msg->bounding_boxes[0].Class;
-  
-  u = (msg->bounding_boxes[0].xmin + msg->bounding_boxes[0].xmax) / 2;
-  v = (msg->bounding_boxes[0].ymin + msg->bounding_boxes[0].ymax) / 2;
- // std::cout << "\033[2J\033[1;1H";     // clear terminal
+  for (size_t i = 0;i < sizeof(msg->bounding_boxes);i++)
+  {
+      if (msg->bounding_boxes[i].Class == target_obj)
+      {
+          std::cout << " and it is  target ! "  << std::endl;
+          u = (msg->bounding_boxes[i].xmin + msg->bounding_boxes[i].xmax) / 2;
+          v = (msg->bounding_boxes[i].ymin + msg->bounding_boxes[i].ymax) / 2;
+          get_target =1;
+          break;
+      }
+      else
+      {
+          std::cout << " but it is not target ! "  << std::endl;
+          get_target =0;
+      }
+  }
+  // std::cout << "\033[2J\033[1;1H";     // clear terminal
 }
 
+//订阅识别物体数量 get_target 清零
+void findObjCallback(const std_msgs::Int8::ConstPtr &msg)
+{
+  if (msg->data == 0)
+  {
+      std::cout << " Find nothing ! " << std::endl;
+      std::cout << "\033[2J\033[1;1H";     // clear terminal
+      get_target = 0;
+  }
+}
+
+//将图像坐标转换为相对于相机的坐标
 void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg) 
 {
-  //std::cout << "pointCloudCallback" << std::endl;
+
 // #if pointCouldDebug
 //   std::cout << "pointCloud2 (header):" << point_cloud_msg->header << std::endl;
 // #endif
 
-    pcl::PointCloud<pcl::PointXYZ> point_pcl;
-    pcl::fromROSMsg(*point_cloud_msg, point_pcl);
-    if (point_pcl.isOrganized ())
+    if (get_target == 1)
     {
-      if (obj_class == target_obj)
-      {
-        auto pt = point_pcl.at(u,v);
-        //旧版本的realsense包乘以0.124987系数
-        camera_x = 0.124987*pt.x;
-        camera_y = 0.124987*pt.y;
-        camera_z = 0.124987*pt.z;
-        std::cout << " coordnate get " << std::endl;
-      }
-    }
-    else
-    std::cout << " the pointcloud is not organized " << std::endl;
-    //std::cout << "\033[2J\033[1;1H";     // clear terminal
+        pcl::PointCloud<pcl::PointXYZ> point_pcl;
+        pcl::fromROSMsg(*point_cloud_msg, point_pcl);
+        if (point_pcl.isOrganized ())
+        {
 
+            pcl::PointXYZ pt = point_pcl.at(u,v);
+            //旧版本的realsense包乘以0.124987系数 单位mm
+            camera_x = pt.x;
+            camera_y = pt.y;
+            camera_z = pt.z;
+            std::cout << " coordnate get " << std::endl;
+        
+        }
+        else
+        std::cout << " the pointcloud is not organized " << std::endl;
+        //std::cout << "\033[2J\033[1;1H";     // clear terminal
+    }
 
 }
 
+//将相对于相机的坐标转换为相对于机械臂的坐标
 bool location(cood_tran_msgs::location::Request &req,
               cood_tran_msgs::location::Response &res) 
 {
-    std::cout << "          teminal_obj_class " << obj_class <<std::endl;
-    if (obj_class != target_obj)     
-        res.arm_on = 0;    
-    else
+    res.get_target = get_target;
+    if(get_target ==1)
     {
-        if(camera_z >= 0 && camera_z <= 1.5)
+        if(!std::isnan(camera_z))
         {
-            std::cout << "          terminal target get."<< std::endl;
-            //乘以转换矩阵得到final_x final_y final_z
+            //乘以转换矩阵得到物体相对于机械臂的坐标
             float final_x, final_y, final_z;
             final_x = camera_x;
             final_y = camera_y;
             final_z = camera_z;
-            float R2 = final_x*final_x + final_y*final_y;
-
+            
             res.x = final_x;
             res.y = final_y;
             res.z = final_z;
-            //判断初步识别到的位置是否在机械臂工作空间
-            if (R2>= 0.2*0.2 && R2<=0.256*0.256)
-            {
-              res.arm_on = 1;
-              std::cout << "            you can grasp "  <<std::endl;
-              
-            }
-            else
-            {
-              std::cout << "            Out of workspace"<< std::endl;
-              res.arm_on = 0;
-              // res.dx = -1*final_x;
-              // res.dy = final_y - 0.256 + 0.01;
-            }
         }
         else
         {
-            res.arm_on = 0;
-            std::cout << "bad parameters "  <<std::endl;
+            std::cout << "bad value "  <<std::endl;
         }
     }
     return true;

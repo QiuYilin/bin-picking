@@ -4,7 +4,7 @@
 
 ros::ServiceClient client;
 float fin_x,fin_y,fin_z;
-bool grasp_on = 1,arm_on = 0,car_on = 0;
+bool grasp_on = 1,get_target = 0,car_on = 0,arm_on =0;
 
 void dobotInit(ros::NodeHandle &n)
 {
@@ -203,13 +203,13 @@ int main(int argc, char **argv)
         cood_tran_msgs::location srv6;
         if(client.call(srv6))
         {
-          arm_on = srv6.response.arm_on;
+          get_target = srv6.response.get_target;
         }
 
         //判断是否识别到目标且小车是否停止
         std::cout<< "grasp_on:" << grasp_on << std::endl;
-        std::cout<< "arm_on:" << arm_on << std::endl;
-        if (arm_on == 1 && grasp_on == 1 )
+        std::cout<< "get_target:" << get_target << std::endl;
+        if (get_target == 1 && grasp_on == 1 )
         {
                 if (count >=3)
                  car_on=1;

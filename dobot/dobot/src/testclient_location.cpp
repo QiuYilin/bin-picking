@@ -17,8 +17,8 @@ while(1)
     
     if(testclient_location.call(srv))
         { 
-            ROS_INFO("arm_on: %d",srv.response.arm_on);
-            if(srv.response.arm_on == 1 )
+            ROS_INFO("get_target: %d",srv.response.get_target);
+            if(srv.response.get_target == 1 )
            {
                 fin_x = srv.response.x;
                 fin_y = srv.response.y;
