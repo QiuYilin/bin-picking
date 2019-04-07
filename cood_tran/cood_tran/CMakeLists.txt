@@ -26,7 +26,7 @@ include_directories(
 
 
 add_executable(cood_tran_node
-  src/cood_tran_node.cpp src/cood_tran.cpp
+  src/cood_tran_node.cpp src/CoordinateTran.cpp
 )
 
 
