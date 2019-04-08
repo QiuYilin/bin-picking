@@ -29,6 +29,10 @@ add_executable(cood_tran_node
   src/cood_tran_node.cpp src/CoordinateTran.cpp
 )
 
+add_executable(coordiniate_node_simple
+  src/coordiniate_node_simple.cpp 
+)
+
 
 # add_executable(opengr
 #   src/opengr.cpp
@@ -36,12 +40,15 @@ add_executable(cood_tran_node
 
 
 add_dependencies(cood_tran_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(coordiniate_node_simple  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(opengr  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(cood_tran_node 
   ${catkin_LIBRARIES}
 )
-
+target_link_libraries(coordiniate_node_simple 
+  ${catkin_LIBRARIES}
+)
 #target_link_libraries(opengr
 #   ${catkin_LIBRARIES}
 #   ${Super4PCS_LiBRARIES}

@@ -13,21 +13,33 @@ namespace huskybot_arm
     std::cout << "target_obj_class" << target_obj <<std::endl;
 
     ROS_INFO("[CoordinateTran] Node started.");
-    ros::Subscriber ros_coord_pixel_sub =
-    nh.subscribe("/darknet_ros/bounding_boxes", 1, &CoordinateTran::darknetCallback,this);
 
-    ros::Subscriber find_obj_sub =
+    find_obj_sub =
     nh.subscribe("/darknet_ros/found_object", 1, &CoordinateTran::findObjCallback,this);
 
-    ros::Subscriber point_cloud_sub =
+
+    ros_coord_pixel_sub =
+    nh.subscribe("/darknet_ros/bounding_boxes", 1, &CoordinateTran::darknetCallback,this);
+
+   
+    point_cloud_sub =
     nh.subscribe("camera/depth_registered/points", 1, &CoordinateTran::pointCouldCallback,this);///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
     
-    ros::ServiceServer location_server =
+    location_server =
     nh.advertiseService("location_srv", &CoordinateTran::location,this);
     }
 
 
-
+        //订阅识别物体数量 get_target 清零
+    void CoordinateTran::findObjCallback(const std_msgs::Int8::ConstPtr &msg)
+    {
+    if (msg->data == 0)
+    {
+        std::cout << " Find nothing ! " << std::endl;
+        std::cout << "\033[2J\033[1;1H";     // clear terminal
+        get_target = 0;
+    }
+    }
 
 
 
@@ -45,6 +57,7 @@ namespace huskybot_arm
             std::cout << " and it is  target ! "  << std::endl;
             u = (msg->bounding_boxes[i].xmin + msg->bounding_boxes[i].xmax) / 2;
             v = (msg->bounding_boxes[i].ymin + msg->bounding_boxes[i].ymax) / 2;
+            std::cout << " dark_u "  << u << " dark_v "  << v << std::endl;
             get_target =1;
             break;
         }
@@ -57,21 +70,11 @@ namespace huskybot_arm
     // std::cout << "\033[2J\033[1;1H";     // clear terminal
     }
 
-    //订阅识别物体数量 get_target 清零
-    void CoordinateTran::findObjCallback(const std_msgs::Int8::ConstPtr &msg)
-    {
-    if (msg->data == 0)
-    {
-        std::cout << " Find nothing ! " << std::endl;
-        std::cout << "\033[2J\033[1;1H";     // clear terminal
-        get_target = 0;
-    }
-    }
+
 
     //将图像坐标转换为相对于相机的坐标
     void CoordinateTran::pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg) 
     {
-
     // #if pointCouldDebug
     //   std::cout << "pointCloud2 (header):" << point_cloud_msg->header << std::endl;
     // #endif
@@ -82,13 +85,13 @@ namespace huskybot_arm
             pcl::fromROSMsg(*point_cloud_msg, point_pcl);
             if (point_pcl.isOrganized ())
             {
-
+                std::cout << " cloud_u "  << u << " cloud_v "  << v << std::endl;
                 pcl::PointXYZ pt = point_pcl.at(u,v);
                 //旧版本的realsense包乘以0.124987系数 单位mm
                 camera_x = pt.x;
                 camera_y = pt.y;
                 camera_z = pt.z;
-                std::cout << " coordnate get " << std::endl;
+                std::cout << " coordnate get: " << " camera_x " <<camera_x <<" camera_y " <<camera_y <<" camera_z " <<camera_z <<std::endl;
             
             }
             else

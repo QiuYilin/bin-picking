@@ -32,7 +32,7 @@ while(1)
         }
     else
         {
-            ROS_INFO("Wait for the camera to be on.");
+            ROS_INFO("Failed to call service location!");
         }    
 }
     return 0;

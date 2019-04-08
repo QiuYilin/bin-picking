@@ -34,10 +34,23 @@ namespace huskybot_arm
     int u,v;
     float camera_x,camera_y,camera_z;
     int get_target;
-    void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg);
-    void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
+
+    ros::Subscriber ros_coord_pixel_sub;
+
+    ros::Subscriber find_obj_sub ;
+
+    ros::Subscriber point_cloud_sub;///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
+    
+    ros::ServiceServer location_server;
+
     void findObjCallback(const std_msgs::Int8::ConstPtr &msg);
+
+    void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg);
+    
+    void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
+
     bool location(cood_tran_msgs::location::Request &req,cood_tran_msgs::location::Response &res);
+
     
 
 
