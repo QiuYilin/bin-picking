@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
 
   ros::init(argc, argv, "coord_tran");
-  ros::NodeHandle nh;
+  ros::NodeHandle nh("~");
   huskybot_arm::CoordinateTran coordTran(nh);
   ros::spin();
   return 0;

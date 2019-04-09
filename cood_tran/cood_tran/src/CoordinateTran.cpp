@@ -23,14 +23,14 @@ namespace huskybot_arm
 
    
     point_cloud_sub =
-    nh.subscribe("camera/depth_registered/points", 1, &CoordinateTran::pointCouldCallback,this);///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
+    nh.subscribe("/camera/depth_registered/points", 1, &CoordinateTran::pointCouldCallback,this);///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
     
     location_server =
     nh.advertiseService("location_srv", &CoordinateTran::location,this);
     }
 
 
-        //订阅识别物体数量 get_target 清零
+    //订阅识别物体数量 get_target 清零
     void CoordinateTran::findObjCallback(const std_msgs::Int8::ConstPtr &msg)
     {
     if (msg->data == 0)

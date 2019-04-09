@@ -26,7 +26,7 @@ namespace huskybot_arm
     //构造函数
     explicit CoordinateTran(ros::NodeHandle nh);
 
-
+    //~CoordinateTran();
 
     private:
     ros::NodeHandle nh;

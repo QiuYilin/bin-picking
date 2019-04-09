@@ -3,12 +3,13 @@
 
 
 ros::ServiceClient client;
-float fin_x,fin_y,fin_z;
-bool grasp_on = 1,get_target = 0,car_on = 0,arm_on =0;
+bool get_target;
+float x,y,z;
 
 void dobotInit(ros::NodeHandle &n)
 {
 
+    std::cout<<"初始化 "<<std::endl;
     // SetCmdTimeout
     client = n.serviceClient<dobot::SetCmdTimeout>("/DobotServer/SetCmdTimeout");
     dobot::SetCmdTimeout srv1;
@@ -97,13 +98,13 @@ void dobotTask(ros::NodeHandle &n)
 {
 
                     do {
-                    //前往目标位置
+                    std::cout<<"前往目标位置"<<std::endl;
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                     srv.request.ptpMode = 1;
-                    srv.request.x = fin_x;
-                    srv.request.y = fin_y;
-                    srv.request.z = fin_z;
+                    srv.request.x = 300;
+                    srv.request.y = 0;
+                    srv.request.z = 10;
                     srv.request.r = 0;
                     client.call(srv);
                     if (srv.response.result == 0) {
@@ -116,16 +117,39 @@ void dobotTask(ros::NodeHandle &n)
                     } while (1);
 
                     do {
-                    //开启吸盘
+                    std::cout<<"开启吸盘 "<<std::endl;
                     client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
                     dobot::SetEndEffectorSuctionCup srv;
                     srv.request.enableCtrl = 1;
-                    srv.request.suck = 1;
+                    srv.request.suck = 0;
                     client.call(srv);
+                     if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
                     }while (1);
 
+                      do {
+                    std::cout<<" 等待   "<<std::endl;       
+                    client = n.serviceClient<dobot::SetWAITCmd>("/DobotServer/SetWAITCmd");
+                    dobot::SetWAITCmd srv;
+                        srv.request.timeout = 2000;
+                        client.call(srv);
+                     if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                    } while (1);
+             
+
                     do {
-                    //把东西放到一边
+                    std::cout<<" 把东西放到一边  "<<std::endl;
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                         srv.request.ptpMode = 1;
@@ -145,16 +169,41 @@ void dobotTask(ros::NodeHandle &n)
 
                     
                     do {
-                    //关闭吸盘       
+                    std::cout<<" 关闭吸盘   "<<std::endl;       
                     client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
                     dobot::SetEndEffectorSuctionCup srv;
-                        srv.request.suck = 0;
+                        srv.request.suck = 1;
                         srv.request.enableCtrl = 1;
                         client.call(srv);
+                     if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
                     } while (1);
-                    //回到起始位置
+                    
+
+                      do {
+                    std::cout<<" 等待   "<<std::endl;       
+                    client = n.serviceClient<dobot:: SetWAITCmd>("/DobotServer/SetWAITCmd");
+                    dobot:: SetWAITCmd srv;
+                        srv.request.timeout = 2000;
+                        client.call(srv);
+                     if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                    } while (1);
+                   
+      
 
                     do {
+                      std::cout<<"  回到起始位置   "<<std::endl;     
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                         srv.request.ptpMode = 1;
@@ -176,10 +225,37 @@ void dobotTask(ros::NodeHandle &n)
 
 bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car_interact::Response &res)
 {
-    //抓取标志位置1
-    grasp_on = req.grasp_on;
-    //返回抓取标志位
-    res.car_on = car_on;
+    ros::NodeHandle n2;
+    //读取目标是否识别到以及目标相对于机械臂的坐标
+    client = n2.serviceClient<cood_tran_msgs::location>("/coord_tran/location_srv");
+    cood_tran_msgs::location srv6;
+    if(client.call(srv6))
+    {
+        get_target = srv6.response.get_target;
+        x = srv6.response.x;
+        y = srv6.response.y;
+        z = srv6.response.z;
+    }
+    if(get_target==1)
+    {
+        float r = sqrt(x*x+y*y);
+        std::cout<<"机械臂运行"<<std::endl;
+        if(r>200&&r<315)
+        {
+            dobotTask(n2); 
+            res.result = 0;
+        }
+        else
+        {
+            std::cout<<"仍然不在机械臂工作空间"<<std::endl;
+            res.result = 1;
+        }
+    }
+    else
+    {
+        std::cout<<"没有识别到物体"<<std::endl;
+        res.result = 2;
+    }
     return true;
 }
  
@@ -194,44 +270,6 @@ int main(int argc, char **argv)
     //ros::param::get("grasp_on", grasp_on);
 
     ros::ServiceServer arm_car_server = n.advertiseService("arm_car_srv",arm_car_interact);
-    int count = 0;
-    while (ros::ok()) 
-    {
-        
-        //读取目标是否识别到
-        client = n.serviceClient<cood_tran_msgs::location>("location_srv");
-        cood_tran_msgs::location srv6;
-        if(client.call(srv6))
-        {
-          get_target = srv6.response.get_target;
-        }
-
-        //判断是否识别到目标且小车是否停止
-        std::cout<< "grasp_on:" << grasp_on << std::endl;
-        std::cout<< "get_target:" << get_target << std::endl;
-        if (get_target == 1 && grasp_on == 1 )
-        {
-                if (count >=3)
-                 car_on=1;
-
-                fin_x = srv6.response.x;
-                fin_y = srv6.response.y;
-                fin_z = srv6.response.z;
-                ROS_INFO("fin_x,fin_y,fin_z: %f, %f,%f",fin_x,fin_y,fin_z);
-                dobotTask(n); 
-                count++;
-                //抓取标志位置0
-                arm_on =0;
-                grasp_on = 0;
-
-        }
-        else
-        ROS_INFO("No target or car is moving");     
-    }
- 
-    
-
-    ros::spin();
     return 0;
 }
 
