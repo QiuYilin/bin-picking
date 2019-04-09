@@ -1,7 +1,0 @@
-bool grasp_on
-
----
-
-float32 dx
-float32 dy
-bool car_on

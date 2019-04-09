@@ -4,7 +4,6 @@ find_package(catkin REQUIRED COMPONENTS message_generation std_msgs)
 
 add_service_files(FILES
   location.srv
-  car_interact.srv
 )
 
 generate_messages(DEPENDENCIES

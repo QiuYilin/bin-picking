@@ -1,7 +1,6 @@
 #include <darknet_ros_msgs/BoundingBox.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
 #include <cood_tran_msgs/location.h>
-#include <cood_tran_msgs/car_interact.h>
 #include <std_msgs/Header.h>
 #include <std_msgs/Int8.h>
 #include <pcl/io/pcd_io.h>

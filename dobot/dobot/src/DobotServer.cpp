@@ -1169,17 +1169,34 @@ int main(int argc, char **argv)
         return -1;
     }
     // Connect Dobot before start the service
-    int result = ConnectDobot(argv[1], 115200, 0, 0);//连接机械臂
+    int result = ConnectDobot("ttyUSB0", 115200, 0, 0);//连接机械臂
     switch (result) {
         case DobotConnect_NoError:
         break;
-        case DobotConnect_NotFound:
+        case DobotConnect_NotFound:{
             ROS_ERROR("Dobot not found!");
             return -2;
+        }
         break;
-        case DobotConnect_Occupied:
-            ROS_ERROR("Invalid port name or Dobot is occupied by other application!");
-            return -3;
+        case DobotConnect_Occupied:{
+            int result2 = ConnectDobot("ttyUSB1", 115200, 0, 0);
+                switch (result2) {
+                    case DobotConnect_NoError:
+                    break;
+                    case DobotConnect_NotFound:{
+                        ROS_ERROR("Dobot not found!");
+                        return -3;
+                    }
+                    break;
+                    case DobotConnect_Occupied:{
+                        ROS_ERROR("both ttyUSB0 and ttyUSB1 are occupied");
+                        return -4;
+                    }
+                    break;
+                    default:
+                    break;
+               }
+        }
         break;
         default:
         break;
