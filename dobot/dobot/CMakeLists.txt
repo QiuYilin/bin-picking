@@ -14,7 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   genmsg
   geometry_msgs
-  cood_tran_msgs
+  coord_tran_msgs
 )
 
 
@@ -114,7 +114,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES dobot
-CATKIN_DEPENDS roscpp rospy std_msgs message_runtime geometry_msgs cood_tran_msgs
+CATKIN_DEPENDS roscpp rospy std_msgs message_runtime geometry_msgs coord_tran_msgs
 #  DEPENDS system_lib
 )
 
