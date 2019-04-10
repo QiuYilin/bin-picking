@@ -259,7 +259,7 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     {
         float r = sqrt(x*x+y*y);
         std::cout<<"机械臂运行"<<std::endl;
-        if(r>200&&r<315)
+        if(r>0.2&&r<0.315)
         {
             dobotTask(n2); 
             res.result = 0;
