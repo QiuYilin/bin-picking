@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>cood_tran</name>
+  <name>coord_tran</name>
   <version>0.0.0</version>
   <description>The cood_tran package</description>  <maintainer email="qiuyilin@todo.todo">qiuyilin</maintainer>
   <license>TODO</license>  <buildtool_depend>catkin</buildtool_depend>

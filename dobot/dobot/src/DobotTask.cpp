@@ -255,6 +255,9 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
         y = srv6.response.y;
         z = srv6.response.z;
     }
+    else
+    std::cout<<"client is failed "<<std::endl;
+
     if(get_target==1)
     {
         float r = sqrt(x*x+y*y);

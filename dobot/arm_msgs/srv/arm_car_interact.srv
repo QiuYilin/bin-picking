@@ -1,5 +1,5 @@
-bool grasp_on
+
 
 ---
 
-bool result
+int8 result
