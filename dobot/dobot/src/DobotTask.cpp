@@ -246,8 +246,8 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
 {
     ros::NodeHandle n2;
     //读取目标是否识别到以及目标相对于机械臂的坐标
-    client = n2.serviceClient<cood_tran_msgs::location>("/coord_tran/location_srv");
-    cood_tran_msgs::location srv6;
+    client = n2.serviceClient<coord_tran_msgs::location>("/coord_tran/location_srv");
+    coord_tran_msgs::location srv6;
     if(client.call(srv6))
     {
         get_target = srv6.response.get_target;

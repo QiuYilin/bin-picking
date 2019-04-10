@@ -103,8 +103,8 @@ namespace huskybot_arm
     }
 
     //将相对于相机的坐标转换为相对于机械臂的坐标
-    bool CoordinateTran::location(cood_tran_msgs::location::Request &req,
-                cood_tran_msgs::location::Response &res) 
+    bool CoordinateTran::location(coord_tran_msgs::location::Request &req,
+                coord_tran_msgs::location::Response &res) 
     {
         res.get_target = get_target;
         if(get_target ==1)

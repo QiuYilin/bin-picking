@@ -3,7 +3,7 @@
 
 #include <darknet_ros_msgs/BoundingBox.h>
 #include <darknet_ros_msgs/BoundingBoxes.h>
-#include <cood_tran_msgs/location.h>
+#include <coord_tran_msgs/location.h>
 #include <std_msgs/Header.h>
 #include <std_msgs/Int8.h>
 #include <pcl/io/pcd_io.h>
@@ -48,7 +48,7 @@ namespace huskybot_arm
     
     void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
 
-    bool location(cood_tran_msgs::location::Request &req,cood_tran_msgs::location::Response &res);
+    bool location(coord_tran_msgs::location::Request &req,coord_tran_msgs::location::Response &res);
 
     
 

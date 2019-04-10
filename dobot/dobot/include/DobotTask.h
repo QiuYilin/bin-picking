@@ -17,7 +17,7 @@
 #include "dobot/SetEndEffectorSuctionCup.h"
 #include "dobot/SetWAITCmd.h"
 
-#include <cood_tran_msgs/location.h>
+#include <coord_tran_msgs/location.h>
 #include <arm_msgs/arm_car_interact.h>
 
 #endif
