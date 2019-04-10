@@ -92,6 +92,25 @@ void dobotInit(ros::NodeHandle &n)
         srv.request.accelerationRatio = 50;
         client.call(srv);
     } while (0);
+                        
+    do {
+        std::cout<<"前往初始位置"<<std::endl;
+        client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
+        dobot::SetPTPCmd srv;
+        srv.request.ptpMode = 1;
+        srv.request.x = 200;
+        srv.request.y = 0;
+        srv.request.z = 0;
+        srv.request.r = 0;
+        client.call(srv);
+        if (srv.response.result == 0) {
+            break;
+        }     
+        ros::spinOnce();
+        if (ros::ok() == false) {
+            break;
+        }
+    } while (1);
 }
 
 void dobotTask(ros::NodeHandle &n)

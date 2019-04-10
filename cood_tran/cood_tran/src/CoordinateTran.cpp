@@ -87,11 +87,12 @@ namespace huskybot_arm
             {
                 std::cout << " cloud_u "  << u << " cloud_v "  << v << std::endl;
                 pcl::PointXYZ pt = point_pcl.at(u,v);
-                //旧版本的realsense包乘以0.124987系数 单位mm
+                //旧版本的realsense包乘以0.124987系数 单位m
                 camera_x = pt.x;
                 camera_y = pt.y;
                 camera_z = pt.z;
                 std::cout << " coordnate get: " << " camera_x " <<camera_x <<" camera_y " <<camera_y <<" camera_z " <<camera_z <<std::endl;
+                
             
             }
             else
@@ -110,11 +111,15 @@ namespace huskybot_arm
         {
             if(!std::isnan(camera_z))
             {
-                //乘以转换矩阵得到物体相对于机械臂的坐标
+                //乘以转换矩阵得到物体相对于机械臂的坐标 单位米
+
                 float final_x, final_y, final_z;
-                final_x = camera_x;
-                final_y = camera_y;
-                final_z = camera_z;
+                
+
+
+                final_x = camera_x+0.0705+0.2;
+                final_y = camera_y+0.0027;
+                final_z = camera_z+0.1035;
                 
                 res.x = final_x;
                 res.y = final_y;
