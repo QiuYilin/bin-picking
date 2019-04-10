@@ -121,9 +121,9 @@ void dobotTask(ros::NodeHandle &n)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                     srv.request.ptpMode = 1;
-                    srv.request.x = 300;
+                    srv.request.x = 200;
                     srv.request.y = 0;
-                    srv.request.z = 10;
+                    srv.request.z = 20;
                     srv.request.r = 0;
                     client.call(srv);
                     if (srv.response.result == 0) {
@@ -228,7 +228,7 @@ void dobotTask(ros::NodeHandle &n)
                         srv.request.ptpMode = 1;
                         srv.request.x = 200;
                         srv.request.y = 0;
-                        srv.request.z = 0;
+                        srv.request.z = 20;
                         srv.request.r = 0;
                         client.call(srv);
                         if (srv.response.result == 0) {
@@ -284,11 +284,12 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "DobotTask");
     ros::NodeHandle n;
-    dobotInit(n);
+    //dobotInit(n);
 
     //ros::param::get("grasp_on", grasp_on);
 
     ros::ServiceServer arm_car_server = n.advertiseService("arm_car_srv",arm_car_interact);
+    ros::spin();
     return 0;
 }
 

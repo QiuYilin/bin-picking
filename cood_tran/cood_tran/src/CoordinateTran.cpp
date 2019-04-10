@@ -117,9 +117,9 @@ namespace huskybot_arm
                 
 
 
-                final_x = camera_x+0.0705+0.2;
+                final_x = camera_x+0.0705+0.3;
                 final_y = camera_y+0.0027;
-                final_z = camera_z+0.1035;
+                final_z = camera_z+0.2035;
                 
                 res.x = final_x;
                 res.y = final_y;
