@@ -17,7 +17,7 @@ sudo apt install ros-kinetic-rgbd-launch
 ```
 roslaunch realsense2_camera rs_rgbd.launch
 roslaunch darknet_ros darknet_ros.launch
-roslaunch cood_tran coo_tran.launch target:=red (red为可选目标)
+roslaunch coord_tran coo_tran.launch target:=red (red为可选目标)
 roslaunch dobot dobot.launch
 
 rosservice call arm_car_srv   (执行一次机械臂抓取任务)

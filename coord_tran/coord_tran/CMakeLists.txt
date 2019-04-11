@@ -3,7 +3,7 @@ project(coord_tran)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
-find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs image_transport std_msgs pcl_ros cood_tran_msgs cv_bridge)
+find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs image_transport std_msgs pcl_ros coord_tran_msgs cv_bridge)
 
 find_package(OpenCV REQUIRED)
 # find_package(Super4PCS REQUIRED)
@@ -25,8 +25,8 @@ include_directories(
 
 
 
-add_executable(cood_tran_node
-  src/cood_tran_node.cpp src/CoordinateTran.cpp
+add_executable(coord_tran_node
+  src/coord_tran_node.cpp src/CoordinateTran.cpp
 )
 
 #add_executable(coordiniate_node_simple
@@ -39,11 +39,11 @@ add_executable(cood_tran_node
 # )
 
 
-add_dependencies(cood_tran_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(coord_tran_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(coordiniate_node_simple  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(opengr  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(cood_tran_node 
+target_link_libraries(coord_tran_node 
   ${catkin_LIBRARIES}
 )
 #target_link_libraries(coordiniate_node_simple 
