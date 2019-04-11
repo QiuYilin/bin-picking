@@ -251,9 +251,9 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     if(client.call(srv6))
     {
         get_target = srv6.response.get_target;
-        x = srv6.response.x;
-        y = srv6.response.y;
-        z = srv6.response.z;
+        x = 1000*srv6.response.x;
+        y =1000*srv6.response.y;
+        z =1000*srv6.response.z;
     }
     else
     std::cout<<"client is failed "<<std::endl;
@@ -262,7 +262,7 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     {
         
         std::cout<<"机械臂运行"<<std::endl;
-        if(r>0.2&&r<0.315)
+        if(r>200&&r<315)
         {
             dobotTask(n2,x,y,z); 
             res.result = 0;
