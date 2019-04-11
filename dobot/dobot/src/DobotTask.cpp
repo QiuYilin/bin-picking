@@ -113,7 +113,7 @@ void dobotInit(ros::NodeHandle &n)
     } while (1);
 }
 
-void dobotTask(ros::NodeHandle &n)
+void dobotTask(ros::NodeHandle &n, float x, float y, float z)
 {
 
                     do {
@@ -121,9 +121,9 @@ void dobotTask(ros::NodeHandle &n)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                     srv.request.ptpMode = 1;
-                    srv.request.x = 200;
-                    srv.request.y = 0;
-                    srv.request.z = 20;
+                    srv.request.x = x;
+                    srv.request.y = y;
+                    srv.request.z = z;
                     srv.request.r = 0;
                     client.call(srv);
                     if (srv.response.result == 0) {
@@ -264,14 +264,14 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
         std::cout<<"机械臂运行"<<std::endl;
         if(r>0.2&&r<0.315)
         {
-            dobotTask(n2); 
+            dobotTask(n2,x,y,z); 
             res.result = 0;
         }
         else
         {
             std::cout<<"仍然不在机械臂工作空间"<<std::endl;
             if (r < 0.2)
-            std::cout<<"目前距离底座中心： "<< (0.2- r)<< "m" <std::endl;
+            std::cout<<"目前距离底座中心： "<< (0.2- r)<< "m" <<std::endl;
             if (r > 0.315)
             std::cout<<"目前距离底座中心： "<< (r - 0.315)<<"m"<<std::endl;
             res.result = 1;
