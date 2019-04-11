@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "DobotTask");
     ros::NodeHandle n;
-    //dobotInit(n);
+    dobotInit(n);
 
     //ros::param::get("grasp_on", grasp_on);
 
