@@ -257,10 +257,10 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     }
     else
     std::cout<<"client is failed "<<std::endl;
-
+    float r = sqrt(x*x+y*y);
     if(get_target==1)
     {
-        float r = sqrt(x*x+y*y);
+        
         std::cout<<"机械臂运行"<<std::endl;
         if(r>0.2&&r<0.315)
         {
@@ -270,6 +270,10 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
         else
         {
             std::cout<<"仍然不在机械臂工作空间"<<std::endl;
+            if (r < 0.2)
+            std::cout<<"目前距离底座中心： "<< (0.2- r)<< "m" <std::endl;
+            if (r > 0.315)
+            std::cout<<"目前距离底座中心： "<< (r - 0.315)<<"m"<<std::endl;
             res.result = 1;
         }
     }
