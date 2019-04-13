@@ -111,15 +111,16 @@ namespace huskybot_arm
         {
             if(!std::isnan(camera_z))
             {
-                //乘以转换矩阵得到物体相对于机械臂的坐标 单位米
+                //乘以转换矩阵得到物体相对于机械臂的坐标 单位米  
 
                 float final_x, final_y, final_z;
                 
 
 
-                final_x = camera_x+0.0705+0.3;
-                final_y = camera_y+0.0027;
-                final_z = camera_z+0.2035;
+
+                final_x = -camera_y+0.0705+0.2;
+                final_y = -camera_x-0.0027;
+                final_z = -camera_z+0.1035+0.07;
                 
                 res.x = final_x;
                 res.y = final_y;
