@@ -98,9 +98,15 @@ void dobotInit(ros::NodeHandle &n)
         client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
         dobot::SetPTPCmd srv;
         srv.request.ptpMode = 1;
+<<<<<<< HEAD
         srv.request.x = 200;
         srv.request.y = 0;
         srv.request.z = 70;
+=======
+        srv.request.x = start_pose_x;
+        srv.request.y = start_pose_y;
+        srv.request.z = start_pose_z;
+>>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
         srv.request.r = 0;
         client.call(srv);
         if (srv.response.result == 0) {
@@ -121,9 +127,15 @@ void dobotTask(ros::NodeHandle &n, float x, float y, float z)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                     srv.request.ptpMode = 1;
+<<<<<<< HEAD
                     srv.request.x = x*1000;
                     srv.request.y = y*1000;
                     srv.request.z = z*1000;
+=======
+                    srv.request.x = x;
+                    srv.request.y = y;
+                    srv.request.z = z;
+>>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
                     srv.request.r = 0;
                     client.call(srv);
                     if (srv.response.result == 0) {
@@ -226,9 +238,15 @@ void dobotTask(ros::NodeHandle &n, float x, float y, float z)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                         srv.request.ptpMode = 1;
+<<<<<<< HEAD
                         srv.request.x = 200;
                         srv.request.y = 0;
                         srv.request.z = 70;
+=======
+                        srv.request.x = start_pose_x;
+                        srv.request.y = start_pose_y;
+                        srv.request.z = start_pose_z;
+>>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
                         srv.request.r = 0;
                         client.call(srv);
                         if (srv.response.result == 0) {
@@ -251,9 +269,9 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     if(client.call(srv6))
     {
         get_target = srv6.response.get_target;
-        x = srv6.response.x;
-        y = srv6.response.y;
-        z = srv6.response.z;
+        x = 1000*srv6.response.x;
+        y =1000*srv6.response.y;
+        z =1000*srv6.response.z;
     }
     else
     std::cout<<"client is failed "<<std::endl;
@@ -262,19 +280,61 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     {
         
         std::cout<<"机械臂运行"<<std::endl;
+<<<<<<< HEAD
         if(r>0.2&&r<0.315)
 //        if(r>0)
         {
             dobotTask(n2,x,y,z); 
             res.result = 0;
+=======
+        if(r>200&&r<315)
+        {
+            dobotTask(n2,x,y,z); 
+            //等待两秒
+            do {
+                 std::cout<<" 等待   "<<std::endl;       
+                 client = n2.serviceClient<dobot:: SetWAITCmd>("/DobotServer/SetWAITCmd");
+                 dobot:: SetWAITCmd srv;
+                 srv.request.timeout = 2000;
+                 client.call(srv);
+                 if (srv.response.result == 0) {
+                     break;
+                    }     
+                 ros::spinOnce();
+                 if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+            //机械臂是否已经回到了初始位置
+            do {
+                 std::cout<<"读取当前机械臂位姿"<<std::endl;       
+                 client = n2.serviceClient<dobot::GetPose>("/DobotServer/GetPose");
+                 dobot::GetPose srv;
+                 
+                 client.call(srv);
+                 if (start_pose_x == 200&&start_pose_y==0&&start_pose_z==70) {               
+                     res.result = 0;
+                      break;
+                    }     
+                 ros::spinOnce();
+                 if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+>>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
         }
         else
         {
             std::cout<<"仍然不在机械臂工作空间"<<std::endl;
+<<<<<<< HEAD
             if (r < 0.2)
             std::cout<<"目前距离底座中心： "<< (0.2- r)<< "m" <<std::endl;
             if (r > 0.315)
             std::cout<<"目前距离底座中心： "<< (r - 0.315)<<"m"<<std::endl;
+=======
+            if (r < 0.2||r > 0.315)
+            std::cout<<"目前距离底座中心： "<< r<< "m" <<std::endl;
+>>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
             res.result = 1;
         }
     }

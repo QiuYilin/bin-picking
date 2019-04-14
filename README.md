@@ -43,7 +43,10 @@ float32 x
 float32 y
 float32 z          #物体相对于机械臂底座坐标
 ```
-
+包含头文件
+```
+coord_tran_msgs/location.h
+```
 
 
 ②名称
@@ -62,6 +65,10 @@ arm_msgs
 
 int8 result #为0表示机械臂执行任务 为1表示不在机械臂工作空间 为2表示没有识别到物体
 
+```
+包含头文件
+```
+arm_msgs/arm_car_interact.h
 ```
 
 

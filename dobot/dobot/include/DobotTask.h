@@ -16,8 +16,12 @@
 #include "dobot/SetPTPCmd.h"
 #include "dobot/SetEndEffectorSuctionCup.h"
 #include "dobot/SetWAITCmd.h"
+#include "dobot/GetPose.h"
 
 #include <coord_tran_msgs/location.h>
 #include <arm_msgs/arm_car_interact.h>
+
+
+float start_pose_x = 200, start_pose_y = 0 , start_pose_z = 70;
 
 #endif
