@@ -155,7 +155,9 @@ add_executable(DobotServer src/DobotServer.cpp)
 target_link_libraries(DobotServer ${catkin_LIBRARIES} DobotDll)
 add_dependencies(DobotServer dobot_gencpp)
 
-
+add_executable(DobotClient_PTP src/DobotClient_PTP.cpp)
+target_link_libraries(DobotClient_PTP ${catkin_LIBRARIES})
+add_dependencies(DobotClient_PTP dobot_gencpp)
 
 add_executable(DobotTask src/DobotTask.cpp)
 target_link_libraries(DobotTask ${catkin_LIBRARIES})
