@@ -127,9 +127,9 @@ void dobotTask(ros::NodeHandle &n, float x, float y, float z)
                     dobot::SetPTPCmd srv;
                     srv.request.ptpMode = 1;
 
-                    srv.request.x = x*1000;
-                    srv.request.y = y*1000;
-                    srv.request.z = z*1000;
+                    srv.request.x = x;
+                    srv.request.y = y;
+                    srv.request.z = z;
                     srv.request.r = 0;
                     client.call(srv);
                     if (srv.response.result == 0) {
