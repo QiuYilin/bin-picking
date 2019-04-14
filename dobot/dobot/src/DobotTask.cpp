@@ -98,15 +98,14 @@ void dobotInit(ros::NodeHandle &n)
         client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
         dobot::SetPTPCmd srv;
         srv.request.ptpMode = 1;
-<<<<<<< HEAD
+
         srv.request.x = 200;
         srv.request.y = 0;
         srv.request.z = 70;
-=======
+
         srv.request.x = start_pose_x;
         srv.request.y = start_pose_y;
         srv.request.z = start_pose_z;
->>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
         srv.request.r = 0;
         client.call(srv);
         if (srv.response.result == 0) {
@@ -127,15 +126,15 @@ void dobotTask(ros::NodeHandle &n, float x, float y, float z)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                     srv.request.ptpMode = 1;
-<<<<<<< HEAD
+
                     srv.request.x = x*1000;
                     srv.request.y = y*1000;
                     srv.request.z = z*1000;
-=======
+
                     srv.request.x = x;
                     srv.request.y = y;
                     srv.request.z = z;
->>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
+
                     srv.request.r = 0;
                     client.call(srv);
                     if (srv.response.result == 0) {
@@ -238,15 +237,15 @@ void dobotTask(ros::NodeHandle &n, float x, float y, float z)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                         srv.request.ptpMode = 1;
-<<<<<<< HEAD
+
                         srv.request.x = 200;
                         srv.request.y = 0;
                         srv.request.z = 70;
-=======
+
                         srv.request.x = start_pose_x;
                         srv.request.y = start_pose_y;
                         srv.request.z = start_pose_z;
->>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
+
                         srv.request.r = 0;
                         client.call(srv);
                         if (srv.response.result == 0) {
@@ -280,13 +279,7 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
     {
         
         std::cout<<"机械臂运行"<<std::endl;
-<<<<<<< HEAD
-        if(r>0.2&&r<0.315)
-//        if(r>0)
-        {
-            dobotTask(n2,x,y,z); 
-            res.result = 0;
-=======
+
         if(r>200&&r<315)
         {
             dobotTask(n2,x,y,z); 
@@ -321,20 +314,20 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
                         break;
                     }
                 } while (1);
->>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
+
         }
         else
         {
             std::cout<<"仍然不在机械臂工作空间"<<std::endl;
-<<<<<<< HEAD
+
             if (r < 0.2)
             std::cout<<"目前距离底座中心： "<< (0.2- r)<< "m" <<std::endl;
             if (r > 0.315)
             std::cout<<"目前距离底座中心： "<< (r - 0.315)<<"m"<<std::endl;
-=======
+
             if (r < 0.2||r > 0.315)
             std::cout<<"目前距离底座中心： "<< r<< "m" <<std::endl;
->>>>>>> 46eee1c134101b7693f448ec4f4340ccabcf1bf7
+
             res.result = 1;
         }
     }
@@ -348,8 +341,7 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
  
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
     ros::init(argc, argv, "DobotTask");
     ros::NodeHandle n;
     dobotInit(n);
