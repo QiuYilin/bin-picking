@@ -98,9 +98,9 @@ void dobotInit(ros::NodeHandle &n)
         client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
         dobot::SetPTPCmd srv;
         srv.request.ptpMode = 1;
-        srv.request.x = 200;
-        srv.request.y = 0;
-        srv.request.z = 0;
+        srv.request.x = start_pose_x;
+        srv.request.y = start_pose_y;
+        srv.request.z = start_pose_z;
         srv.request.r = 0;
         client.call(srv);
         if (srv.response.result == 0) {
@@ -226,9 +226,9 @@ void dobotTask(ros::NodeHandle &n, float x, float y, float z)
                     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
                     dobot::SetPTPCmd srv;
                         srv.request.ptpMode = 1;
-                        srv.request.x = 200;
-                        srv.request.y = 0;
-                        srv.request.z = 20;
+                        srv.request.x = start_pose_x;
+                        srv.request.y = start_pose_y;
+                        srv.request.z = start_pose_z;
                         srv.request.r = 0;
                         client.call(srv);
                         if (srv.response.result == 0) {
@@ -265,7 +265,37 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
         if(r>200&&r<315)
         {
             dobotTask(n2,x,y,z); 
-            res.result = 0;
+            //等待两秒
+            do {
+                 std::cout<<" 等待   "<<std::endl;       
+                 client = n2.serviceClient<dobot:: SetWAITCmd>("/DobotServer/SetWAITCmd");
+                 dobot:: SetWAITCmd srv;
+                 srv.request.timeout = 2000;
+                 client.call(srv);
+                 if (srv.response.result == 0) {
+                     break;
+                    }     
+                 ros::spinOnce();
+                 if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
+            //机械臂是否已经回到了初始位置
+            do {
+                 std::cout<<"读取当前机械臂位姿"<<std::endl;       
+                 client = n2.serviceClient<dobot::GetPose>("/DobotServer/GetPose");
+                 dobot::GetPose srv;
+                 
+                 client.call(srv);
+                 if (start_pose_x == 200&&start_pose_y==0&&start_pose_z==70) {               
+                     res.result = 0;
+                      break;
+                    }     
+                 ros::spinOnce();
+                 if (ros::ok() == false) {
+                        break;
+                    }
+                } while (1);
         }
         else
         {
