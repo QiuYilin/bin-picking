@@ -265,7 +265,7 @@ bool arm_car_interact(arm_msgs::arm_car_interact::Request &req,arm_msgs::arm_car
         if(r>200&&r<315)
         {
             dobotTask(n2,x,y,z); 
-            //等待两秒
+            //等待2秒,确保机械臂已经开始运动
             do {
                  std::cout<<" 等待   "<<std::endl;       
                  client = n2.serviceClient<dobot:: SetWAITCmd>("/DobotServer/SetWAITCmd");
