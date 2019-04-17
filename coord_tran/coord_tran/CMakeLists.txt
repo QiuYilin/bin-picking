@@ -3,7 +3,7 @@ project(coord_tran)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
-find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs image_transport std_msgs pcl_ros coord_tran_msgs cv_bridge)
+find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs image_transport std_msgs pcl_ros coord_tran_msgs cv_bridge OpenCV)
 
 find_package(OpenCV REQUIRED)
 # find_package(Super4PCS REQUIRED)
@@ -45,6 +45,7 @@ add_dependencies(coord_tran_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_E
 
 target_link_libraries(coord_tran_node 
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
 )
 #target_link_libraries(coordiniate_node_simple 
   #${catkin_LIBRARIES}
