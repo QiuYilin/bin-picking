@@ -73,6 +73,12 @@ arm_msgs/arm_car_interact.h
 
 
 
+记录识别到的点云的方法
+rosbag record /coord_tran/pcl_output   生成bag文件
+
+
+
+
 
 
                                          #  更新
