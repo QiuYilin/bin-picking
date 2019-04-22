@@ -174,6 +174,8 @@ namespace huskybot_arm
                        
                    }
                 }
+
+                
                 pcl::PointXYZ pt = point_pcl.at(u,v);
                 //旧版本的realsense包乘以0.124987系数 单位m
                 camera_x = pt.x;
