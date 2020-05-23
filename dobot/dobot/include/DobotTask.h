@@ -21,7 +21,18 @@
 #include <coord_tran_msgs/location.h>
 #include <arm_msgs/arm_car_interact.h>
 
+#include "dobot/SetIODO.h"
+#include "dobot/SetIOMultiplexing.h"
 
-float start_pose_x = 200, start_pose_y = 0 , start_pose_z = 70;
 
+
+#include <iostream>
+#include <Eigen/Eigen>
+#include <Eigen/Dense>
+#include <Eigen/Geometry>
+#include <Eigen/Eigenvalues>
+
+
+float start_pose_x = 190, start_pose_y = 160 , start_pose_z = 100;
+float tool_length = 120;
 #endif

@@ -1,0 +1,17 @@
+<launch>
+
+<include file="$(find realsense2_camera)/launch/rs_rgbd.launch">
+  
+ </include>
+
+<include file="$(find darknet_ros)/launch/darknet_ros.launch">
+</include>
+
+
+<include file="$(find coord_tran)/launch/coo_tran.launch">
+</include>
+
+<include file="$(find dobot)/launch/dobot.launch">
+</include>
+
+</launch>   

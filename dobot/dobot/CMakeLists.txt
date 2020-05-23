@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(dobot)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
-# add_definitions(-std=c++11)
+ add_definitions(-std=c++11)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -17,7 +17,16 @@ find_package(catkin REQUIRED COMPONENTS
   coord_tran_msgs
 )
 
+find_package( Eigen3 REQUIRED )
 
+include_directories(
+  
+# include
+  
+  ${OpenCV_LIBRARIES}
+  ${EIGEN3_INCLUDE_DIR}
+  #${Super4PCS_INCLUDE_DIR}
+)
 add_message_files(
   FILES
 )
@@ -133,7 +142,10 @@ else()
     include_directories(
       ${catkin_INCLUDE_DIRS}
       src/DobotDll_x64
+
     )
+    
+
 
     link_directories(
       src/DobotDll_x64
@@ -142,11 +154,11 @@ endif()
 
 
 
-add_executable(testclient_location src/testclient_location.cpp)
-add_dependencies(testclient_location ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(testclient_location
-  ${catkin_LIBRARIES}
-)
+# add_executable(testclient_location src/testclient_location.cpp)
+# add_dependencies(testclient_location ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(testclient_location
+#   ${catkin_LIBRARIES}
+# )
 
 
 
@@ -159,10 +171,29 @@ add_executable(DobotClient_PTP src/DobotClient_PTP.cpp)
 target_link_libraries(DobotClient_PTP ${catkin_LIBRARIES})
 add_dependencies(DobotClient_PTP dobot_gencpp)
 
+add_executable(DobotClient_JOG src/DobotClient_JOG.cpp)
+target_link_libraries(DobotClient_JOG ${catkin_LIBRARIES})
+add_dependencies(DobotClient_JOG dobot_gencpp)
+
 add_executable(DobotTask src/DobotTask.cpp)
 target_link_libraries(DobotTask ${catkin_LIBRARIES})
 add_dependencies(DobotTask dobot_gencpp)
 
+add_executable(iotest src/iotest.cpp)
+target_link_libraries(iotest ${catkin_LIBRARIES})
+add_dependencies(iotest dobot_gencpp)
+
+add_executable(iotest16 src/iotest16.cpp)
+target_link_libraries(iotest16 ${catkin_LIBRARIES})
+add_dependencies(iotest16 dobot_gencpp)
+
+add_executable(iotest_close src/iotest_close.cpp)
+target_link_libraries(iotest_close ${catkin_LIBRARIES})
+add_dependencies(iotest_close dobot_gencpp)
+
+add_executable(r_test src/r_test.cpp)
+target_link_libraries(r_test ${catkin_LIBRARIES})
+add_dependencies(r_test dobot_gencpp)
 
 include_directories(
   include ${catkin_INCLUDE_DIRS}

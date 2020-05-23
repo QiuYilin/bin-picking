@@ -1189,7 +1189,7 @@ int main(int argc, char **argv)
                     }
                     break;
                     case DobotConnect_Occupied:{
-                        ROS_ERROR("both ttyUSB0 and ttyUSB1 are occupied");
+                        ROS_ERROR("both ttyUSB0 and ttyUSB1 are occupied, please check the port permission");
                         return -4;
                     }
                     break;

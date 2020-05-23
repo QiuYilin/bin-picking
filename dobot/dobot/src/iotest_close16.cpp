@@ -1,32 +1,36 @@
 #include "ros/ros.h"
+#include <math.h>
 #include "std_msgs/String.h"
 #include "dobot/SetCmdTimeout.h"
 #include "dobot/SetQueuedCmdClear.h"
 #include "dobot/SetQueuedCmdStartExec.h"
 #include "dobot/SetQueuedCmdForceStopExec.h"
 #include "dobot/GetDeviceVersion.h"
-
 #include "dobot/SetEndEffectorParams.h"
 #include "dobot/SetPTPJointParams.h"
 #include "dobot/SetPTPCoordinateParams.h"
 #include "dobot/SetPTPJumpParams.h"
 #include "dobot/SetPTPCommonParams.h"
 #include "dobot/SetPTPCmd.h"
+#include "dobot/SetEndEffectorSuctionCup.h"
+#include "dobot/SetWAITCmd.h"
+#include "dobot/SetIODO.h"
+#include "dobot/SetIOMultiplexing.h"
+#include "dobot/GetIOMultiplexing.h"
+#include "dobot/GetPose.h"
+#define io 0 //0 16 1 17
 
-int main(int argc, char **argv)
+ros::ServiceClient client;
+void dobotInit(ros::NodeHandle &n)
 {
-    ros::init(argc, argv, "DobotClient");
-    ros::NodeHandle n;
 
-    ros::ServiceClient client;
-
+    std::cout<<"初始化 "<<std::endl;
     // SetCmdTimeout
     client = n.serviceClient<dobot::SetCmdTimeout>("/DobotServer/SetCmdTimeout");
     dobot::SetCmdTimeout srv1;
     srv1.request.timeout = 3000;
     if (client.call(srv1) == false) {
-        ROS_ERROR("Failed to call SetCmdTimeout. Maybe DobotServer isn't started yet!");
-        return -1;
+        ROS_ERROR("Wait fot dobotserver to be on.");
     }
 
     // Clear the command queue
@@ -49,13 +53,13 @@ int main(int argc, char **argv)
         ROS_ERROR("Failed to get device version information!");
     }
 
-    // Set end effector parameters
     client = n.serviceClient<dobot::SetEndEffectorParams>("/DobotServer/SetEndEffectorParams");
     dobot::SetEndEffectorParams srv5;
     srv5.request.xBias = 70;
     srv5.request.yBias = 0;
     srv5.request.zBias = 0;
     client.call(srv5);
+
 
     // Set PTP joint parameters
     do {
@@ -102,49 +106,90 @@ int main(int argc, char **argv)
         srv.request.accelerationRatio = 50;
         client.call(srv);
     } while (0);
+                        
+    do {
+        std::cout<<"前往初始位置"<<std::endl;
+        client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
+        dobot::SetPTPCmd srv;
+        srv.request.ptpMode = 1;
 
-    client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
-    dobot::SetPTPCmd srv;
+        srv.request.x = 200;
+        srv.request.y = 0;
+        srv.request.z = 70;
 
-    while (ros::ok()) {
-        // The first point
-        do {
-            srv.request.ptpMode = 1;
-            srv.request.x = 200;
-            srv.request.y = 0;
-            srv.request.z = 0;
-            srv.request.r = 0;
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }     
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-
-
-        // The first point
-        do {
-            srv.request.ptpMode = 1;
-            srv.request.x = 250;
-            srv.request.y = 0;
-            srv.request.z = 0;
-            srv.request.r = 90;
-            client.call(srv);
-            if (srv.response.result == 0) {
-                break;
-            }
-            ros::spinOnce();
-            if (ros::ok() == false) {
-                break;
-            }
-        } while (1);
-  
+        srv.request.x = 200;
+        srv.request.y = 0;
+        srv.request.z = 70;
+        srv.request.r = 0;
+        client.call(srv);
+        if (srv.response.result == 0) {
+            break;
+        }     
         ros::spinOnce();
-    }
-
-    return 0;
+        if (ros::ok() == false) {
+            break;
+        }
+    } while (1);
 }
 
+int main(int argc, char **argv){
+
+    ros::init(argc, argv, "IOtest");
+    ros::NodeHandle n;
+    dobotInit(n);
+    do{
+    //IO复用
+    client = n.serviceClient<dobot::SetIOMultiplexing>("/DobotServer/SetIOMultiplexing");
+    dobot::SetIOMultiplexing srv;
+    srv.request.address = 17;
+    srv.request.multiplex = 1;
+    client.call(srv);
+     if (srv.response.result == 0) {
+     std::cout<<" 复用   "<<std::endl;
+     break;
+    }
+     if (ros::ok() == false) 
+     break;
+    }while(1);
+
+    while(ros::ok()){
+#if io
+    do{
+          
+    client = n.serviceClient<dobot::SetIODO>("/DobotServer/SetIODO");
+    dobot::SetIODO srv1;
+    srv1.request.address = 17;
+    srv1.request.level = 0;
+    srv1.request.isQueued = 1;
+    client.call(srv1);
+    if (srv1.response.result == 0) {
+     std::cout<<" 灯亮   "<<std::endl;
+     break;
+    }
+     if (ros::ok() == false) 
+     break;
+     
+    }while(1); 
+#endif   
+#if !io
+                    do {
+                    std::cout<<"负压关闭 "<<std::endl;
+                    client = n.serviceClient<dobot::SetEndEffectorSuctionCup>("/DobotServer/SetEndEffectorSuctionCup");
+                    dobot::SetEndEffectorSuctionCup srv;
+                    srv.request.enableCtrl = 0;
+                    srv.request.suck = 0;
+                    srv.request.isQueued = 1;//要加到队列**
+                    client.call(srv);
+                     if (srv.response.result == 0) {
+                        break;
+                    }     
+                    ros::spinOnce();
+                    if (ros::ok() == false) {
+                        break;
+                    }
+                    }while (1);
+#endif
+    }
+    ros::spin();
+    return 0;
+}

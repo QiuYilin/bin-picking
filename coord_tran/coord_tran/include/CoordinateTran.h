@@ -23,7 +23,43 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>//opencv模块
 
+
+#include <pcl/ModelCoefficients.h>
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/kdtree/kdtree.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/segmentation/extract_clusters.h>
+
+#include <iostream>
+
+
+#include <pcl/filters/statistical_outlier_removal.h>//统计滤波头文件
+
+#include <pcl/filters/filter.h>
+
+//矩阵转换坐标系
+
+#include <Eigen/Dense>
+#include <Eigen/SVD>
+
 #define pictureCatch 0
+//最小包围盒用
+#include <pcl/filters/project_inliers.h>
+#include <pcl/filters/passthrough.h>
+#include <pcl/filters/radius_outlier_removal.h>
+#include <pcl/kdtree/kdtree_flann.h>
+#include <Eigen/Core>
+#include <pcl/common/transforms.h>
+#include <pcl/common/common.h>
+#include <pcl/common/time.h>
+#include <pcl/common/angles.h>
+#include <pcl/registration/transformation_estimation_svd.h>
 
 
 
@@ -36,28 +72,33 @@ namespace huskybot_arm
     public:
     //构造函数
     explicit CoordinateTran(ros::NodeHandle nh);
-    //~CoordinateTran();
+    virtual ~CoordinateTran()=default;
 
-    private:
-    ros::NodeHandle nh;
+    protected:
+
+    //ros::NodeHandle nh;
     std::string target_obj;
     int u,v;
     int x_min,x_max,y_min,y_max;
-    float camera_x,camera_y,camera_z;
+    float middle_x,middle_y,middle_z;
+    std::vector<float> camera_location;
     int get_target;
-    
+
+
+    pcl::visualization::CloudViewer viewer;
     ros::Subscriber ros_coord_pixel_sub;
 
     ros::Subscriber find_obj_sub ;
 
     ros::Subscriber point_cloud_sub;///camera/depth_registered/points  /camera/depth_registered/points<->color_optical
 
-    pcl::visualization::CloudViewer viewer;
 
 #if   pictureCatch
     
     image_transport::Subscriber picture_sub;
     
+    
+
     void pictureCallback(const sensor_msgs::Image::ConstPtr &image_msg);
 #endif 
     
@@ -69,17 +110,25 @@ namespace huskybot_arm
 
     void darknetCallback(const darknet_ros_msgs::BoundingBoxes::ConstPtr &msg);
 
-    void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
+    virtual void pointCouldCallback( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
 
     bool location(coord_tran_msgs::location::Request &req,coord_tran_msgs::location::Response &res);
-
-
     
-    
-
-
+    std::vector<float> threeDdeal (pcl::PointCloud<pcl::PointXYZ>::Ptr cloud);
     
   };
+
+
+  // class CoordinateTran3D :public CoordinateTran
+  // {
+  //   public:
+  //   explicit CoordinateTran3D(ros::NodeHandle nh):CoordinateTran(nh);  
+
+  //   private:
+
+  //   void pointCouldCallback override( const sensor_msgs::PointCloud2::ConstPtr &point_cloud_msg);
+  // //如何定义派生类的虚函数
+  // };
 
 
 }

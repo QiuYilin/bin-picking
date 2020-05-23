@@ -11,7 +11,7 @@ namespace huskybot_arm
 { 
 
     CoordinateTran::CoordinateTran(ros::NodeHandle nh)
-    :viewer("cloud in box"),nh(nh),get_target(0)
+    :viewer("cloud in box"),get_target(0)
     {
     ros::param::get("target", target_obj);
 
@@ -72,9 +72,9 @@ namespace huskybot_arm
                 x_max = msg->bounding_boxes[i].xmax;
                 y_min = msg->bounding_boxes[i].ymin;
                 y_max = msg->bounding_boxes[i].ymax;
-                u = (x_min + x_max) / 2;
+                 u = (x_min + x_max) / 2;
                 v = (y_min + y_max) / 2;
-                std::cout << " dark_u "  << u << " dark_v "  << v << std::endl;
+             std::cout << " dark_u "  << u << " dark_v "  << v << std::endl;
                 get_target =1;
                 break;
             }
@@ -139,7 +139,6 @@ namespace huskybot_arm
     // #if pointCouldDebug
     //   std::cout << "pointCloud2 (header):" << point_cloud_msg->header << std::endl;
     // #endif
- 
         pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_inbox (new pcl::PointCloud<pcl::PointXYZ>);
         cloud_inbox->clear();
         sensor_msgs::PointCloud2 cloud_inbox_msgs;
@@ -159,29 +158,28 @@ namespace huskybot_arm
                 std::cout << "cloud_inbox.width "<<cloud_inbox->width << "cloud_inbox.height  " << cloud_inbox->height <<std::endl;
                 cloud_inbox->points.resize (cloud_inbox->width * cloud_inbox->height);
                 std::cout << "new cloud" <<std::endl;
+                //获取到的点云
                 for (int i=0; i< cloud_inbox->width&&i+x_min<640; ++i)
                 {
                    for (int j=0; j< cloud_inbox->height&&j+y_min<480; ++j)
                    {
-                       
-                    //    std::cout << " i  " << i <<" j "<< j  <<std::endl;
-                    //    std::cout << " x_min+i  " << x_min+i <<" y_min+j "<< y_min+j  <<std::endl;
                        cloud_inbox->at(i,j).x =point_pcl.at(x_min+i,y_min+j).x;
                        cloud_inbox->at(i,j).y =point_pcl.at(x_min+i,y_min+j).y;
                        cloud_inbox->at(i,j).z =point_pcl.at(x_min+i,y_min+j).z;
-
-                       //std::cout << "x " << cloud_inbox.points[i].x << " y " << cloud_inbox.points[i].y << " z " << cloud_inbox.points[i].z <<std::endl;
-                       
+                      // std::cout << " x_min+i: " << x_min+i <<" y_min+j " <<y_min+j<<std::endl;
                    }
                 }
-
                 
-                pcl::PointXYZ pt = point_pcl.at(u,v);
+                 pcl::PointXYZ pt = point_pcl.at(u,v);
                 //旧版本的realsense包乘以0.124987系数 单位m
-                camera_x = pt.x;
-                camera_y = pt.y;
-                camera_z = pt.z;
-                std::cout << " coordnate get: " << " camera_x " <<camera_x <<" camera_y " <<camera_y <<" camera_z " <<camera_z <<std::endl;
+                middle_x = pt.x;
+                middle_y = pt.y;
+                middle_z = pt.z;
+               
+		std::cout << " res.x: " <<  middle_x  <<" res.y " <<middle_y  <<"res.z " <<middle_z<<std::endl;
+                camera_location = CoordinateTran::threeDdeal(cloud_inbox);
+                std::cout << " over: " <<endl;
+                //std::cout << " loctian get: " << " camera_x " <<camera_location[0] <<" camera_y " <<camera_location[1] <<" camera_z " <<camera_location[2] << "camera_r" << camera_location[3]<<std::endl;
                 
             
             }
@@ -190,9 +188,10 @@ namespace huskybot_arm
             //std::cout << "\033[2J\033[1;1H";     // clear terminal
         }
         viewer.showCloud(cloud_inbox);
-        pcl::toROSMsg(*cloud_inbox, cloud_inbox_msgs);
+       pcl::toROSMsg(*cloud_inbox, cloud_inbox_msgs);
         cloud_inbox_msgs.header.frame_id = "camera_color_optical_frame";
-        pcl_pub.publish(cloud_inbox_msgs);
+       pcl_pub.publish(cloud_inbox_msgs);
+
 
     }
 
@@ -203,32 +202,25 @@ namespace huskybot_arm
         res.get_target = get_target;
         if(get_target ==1)
         { 
-            if(!std::isnan(camera_z))
+            if(!std::isnan(camera_location[2]))
             {
                 //乘以转换矩阵得到物体相对于机械臂的坐标 单位米  
 
                 
-                
-                
-                
-                float final_x, final_y, final_z;
-                
 
-                //最终坐标=模型转换坐标+牌照位置+修正值
-
-                final_x = -camera_y+0.0705+0.20+0.01;
-                final_y = -camera_x-0.0027+0.00+0.01;
-                final_z = -camera_z+0.1035+0.07-0.005;
-                
-                res.x = final_x;
-                res.y = final_y;
-                res.z = final_z;
+                res.x = middle_x;
+                res.y = middle_y;
+                res.z =  camera_location[2];
+		res.r = camera_location[3];
+		 std::cout << " res.x: " << res.x << middle_x  <<" res.y " <<res.y <<"res.z " <<res.z <<std::endl;
             }
             else
             {
                 std::cout << "bad value "  <<std::endl;
             }
         }
+        
+        
         return true;
     }
 

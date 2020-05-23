@@ -7,7 +7,7 @@ find_package(catkin REQUIRED COMPONENTS darknet_ros_msgs roscpp sensor_msgs imag
 
 find_package(OpenCV REQUIRED)
 # find_package(Super4PCS REQUIRED)
-# find_package( Eigen3 REQUIRED )
+find_package( Eigen3 REQUIRED )
 
 catkin_package()
 
@@ -26,49 +26,26 @@ include_directories(
 
 
 add_executable(coord_tran_node
-  src/coord_tran_node.cpp src/CoordinateTran.cpp
+  src/coord_tran_node.cpp src/CoordinateTran.cpp src/threeDdeal.cpp 
 )
 
-#add_executable(coordiniate_node_simple
-  #src/coordiniate_node_simple.cpp 
-#)
-
-
-# add_executable(opengr
-#   src/opengr.cpp
-# )
-
-
 add_dependencies(coord_tran_node  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(coordiniate_node_simple  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(opengr  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(coord_tran_node 
   ${catkin_LIBRARIES}
   ${OpenCV_LIBRARIES}
 )
-#target_link_libraries(coordiniate_node_simple 
-  #${catkin_LIBRARIES}
-#)
-#target_link_libraries(opengr
-#   ${catkin_LIBRARIES}
-#   ${Super4PCS_LiBRARIES}
-# )
 
 
+add_executable(threeDtest
+  src/threeDtest.cpp 
+)
 
+add_dependencies(threeDtest  ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-# add_executable(cood_tran_depth src/cood_tran_depth.cpp)
-#  target_link_libraries(cood_tran_depth
-#    ${catkin_LIBRARIES}
-#    ${OpenCV_LIBRARIES}
-#  )
-# add_dependencies(cood_tran_depth ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-# target_link_libraries(cood_tran_depth
-#   ${catkin_LIBRARIES}
-# )
-
-
+target_link_libraries(threeDtest
+  ${catkin_LIBRARIES}
+)
 
 SET(CMAKE_BUILD_TYPE "Debug")  
 SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")

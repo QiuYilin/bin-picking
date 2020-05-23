@@ -106,13 +106,13 @@ int main(int argc, char **argv)
     client = n.serviceClient<dobot::SetPTPCmd>("/DobotServer/SetPTPCmd");
     dobot::SetPTPCmd srv;
 
-    while (ros::ok()) {
+
         // The first point
         do {
             srv.request.ptpMode = 1;
-            srv.request.x = 200;
-            srv.request.y = 0;
-            srv.request.z = 0;
+            srv.request.x = 190;
+            srv.request.y = 160;
+            srv.request.z = 100;
             srv.request.r = 0;
             client.call(srv);
             if (srv.response.result == 0) {
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
         } while (1);
   
         ros::spinOnce();
-    }
+    
 
     return 0;
 }
